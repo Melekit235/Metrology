@@ -1,0 +1,10 @@
+D:\ВУЗ\metrology\holsted\holsted\bin\Debug\holsted.exe.config
+D:\ВУЗ\metrology\holsted\holsted\bin\Debug\holsted.exe
+D:\ВУЗ\metrology\holsted\holsted\bin\Debug\holsted.pdb
+D:\ВУЗ\metrology\holsted\holsted\obj\Debug\holsted.csproj.AssemblyReference.cache
+D:\ВУЗ\metrology\holsted\holsted\obj\Debug\holsted.csproj.SuggestedBindingRedirects.cache
+D:\ВУЗ\metrology\holsted\holsted\obj\Debug\holsted.Properties.Resources.resources
+D:\ВУЗ\metrology\holsted\holsted\obj\Debug\holsted.csproj.GenerateResource.cache
+D:\ВУЗ\metrology\holsted\holsted\obj\Debug\holsted.csproj.CoreCompileInputs.cache
+D:\ВУЗ\metrology\holsted\holsted\obj\Debug\holsted.exe
+D:\ВУЗ\metrology\holsted\holsted\obj\Debug\holsted.pdb

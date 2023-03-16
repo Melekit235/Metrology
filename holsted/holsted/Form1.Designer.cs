@@ -46,34 +46,36 @@
             // 
             // inputText
             // 
-            this.inputText.Location = new System.Drawing.Point(13, 62);
-            this.inputText.Margin = new System.Windows.Forms.Padding(4);
+            this.inputText.Font = new System.Drawing.Font("Microsoft Sans Serif", 11F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.inputText.Location = new System.Drawing.Point(12, 12);
             this.inputText.Name = "inputText";
-            this.inputText.Size = new System.Drawing.Size(469, 647);
+            this.inputText.Size = new System.Drawing.Size(353, 621);
             this.inputText.TabIndex = 0;
             this.inputText.Text = "";
             // 
             // openFileDialog1
             // 
-            this.openFileDialog1.FileName = "openFileDialog1";
+            this.openFileDialog1.FileName = "f.txt";
+            this.openFileDialog1.InitialDirectory = "d:\\ВУЗ\\metrology\\Metrology\\holsted\\holsted\\bin\\Debug\\";
+            this.openFileDialog1.Tag = ".txt";
             // 
             // ButOpenFile
             // 
-            this.ButOpenFile.Location = new System.Drawing.Point(13, 18);
-            this.ButOpenFile.Margin = new System.Windows.Forms.Padding(4);
+            this.ButOpenFile.Location = new System.Drawing.Point(12, 639);
             this.ButOpenFile.Name = "ButOpenFile";
-            this.ButOpenFile.Size = new System.Drawing.Size(230, 36);
+            this.ButOpenFile.Size = new System.Drawing.Size(172, 29);
             this.ButOpenFile.TabIndex = 1;
-            this.ButOpenFile.Text = "OpenFile";
+            this.ButOpenFile.Text = "Открыть";
             this.ButOpenFile.UseVisualStyleBackColor = true;
             this.ButOpenFile.Click += new System.EventHandler(this.ButOpenFile_Click);
             // 
             // richTextBox1
             // 
-            this.richTextBox1.Location = new System.Drawing.Point(491, 590);
-            this.richTextBox1.Margin = new System.Windows.Forms.Padding(3, 2, 3, 2);
+            this.richTextBox1.Font = new System.Drawing.Font("Microsoft Sans Serif", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.richTextBox1.Location = new System.Drawing.Point(370, 556);
+            this.richTextBox1.Margin = new System.Windows.Forms.Padding(2);
             this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.Size = new System.Drawing.Size(672, 121);
+            this.richTextBox1.Size = new System.Drawing.Size(742, 112);
             this.richTextBox1.TabIndex = 2;
             this.richTextBox1.Text = "";
             // 
@@ -123,8 +125,7 @@
             this.dataGrid.DefaultCellStyle = dataGridViewCellStyle2;
             this.dataGrid.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
             this.dataGrid.EnableHeadersVisualStyles = false;
-            this.dataGrid.Location = new System.Drawing.Point(490, 62);
-            this.dataGrid.Margin = new System.Windows.Forms.Padding(4);
+            this.dataGrid.Location = new System.Drawing.Point(371, 12);
             this.dataGrid.MultiSelect = false;
             this.dataGrid.Name = "dataGrid";
             this.dataGrid.ReadOnly = true;
@@ -141,31 +142,31 @@
             this.dataGrid.ShowCellToolTips = false;
             this.dataGrid.ShowEditingIcon = false;
             this.dataGrid.ShowRowErrors = false;
-            this.dataGrid.Size = new System.Drawing.Size(672, 522);
+            this.dataGrid.Size = new System.Drawing.Size(741, 539);
             this.dataGrid.TabIndex = 4;
             // 
             // ButCount
             // 
-            this.ButCount.Location = new System.Drawing.Point(251, 18);
-            this.ButCount.Margin = new System.Windows.Forms.Padding(4);
+            this.ButCount.Location = new System.Drawing.Point(191, 639);
             this.ButCount.Name = "ButCount";
-            this.ButCount.Size = new System.Drawing.Size(232, 36);
+            this.ButCount.Size = new System.Drawing.Size(174, 29);
             this.ButCount.TabIndex = 5;
-            this.ButCount.Text = "Count";
+            this.ButCount.Text = "Посчитать";
             this.ButCount.UseVisualStyleBackColor = true;
             this.ButCount.Click += new System.EventHandler(this.ButCount_Click);
             // 
             // Form1
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
+            this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1175, 722);
+            this.ClientSize = new System.Drawing.Size(1124, 680);
             this.Controls.Add(this.ButCount);
             this.Controls.Add(this.dataGrid);
             this.Controls.Add(this.richTextBox1);
             this.Controls.Add(this.ButOpenFile);
             this.Controls.Add(this.inputText);
-            this.Margin = new System.Windows.Forms.Padding(4);
+            this.MaximizeBox = false;
+            this.MinimizeBox = false;
             this.Name = "Form1";
             this.Text = "Form1";
             ((System.ComponentModel.ISupportInitialize)(this.dataGrid)).EndInit();

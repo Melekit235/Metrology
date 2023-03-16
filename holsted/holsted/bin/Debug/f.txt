@@ -1,0 +1,53 @@
+let matrixMultiply (a: int[,]) (b: int[,]) =
+    let m = a.GetLength(0)
+    let n = a.GetLength(1)
+    let p = b.GetLength(1)
+
+    if n <> b.GetLength(0) then
+        failwith "Matrices are not compatible for multiplication"
+
+    let c = Array2D.create p m 0
+
+    for i = 0 to m - 1 do
+        for j = 0 to p - 1 do
+            let mutable sum = 0
+            for k = 0 to n - 1 do
+                sum <- sum + a.[i, k] * b.[k, j]
+            c.[j, i] <- sum
+
+    c
+
+let printMatrix (a: int[,]) =
+    let m = a.GetLength(0)
+    let n = a.GetLength(1)
+
+    for i = 0 to m - 1 do
+        for j = 0 to n - 1 do
+            printf "%d " a.[i, j]
+        printfn ""
+
+[<EntryPoint>]
+let main (argv) =
+    let a = array2D [[1; 2; 3]; [4; 5; 6]]
+    let b = array2D [[7; 8]; [9; 10]; [11; 12]]
+
+    printfn "Matrix A:"
+    printMatrix a
+
+    printfn "Matrix B:"
+    printMatrix b
+
+    let c = matrixMultiply a b
+
+    printfn "Matrix C = A * B:"
+    printMatrix c
+
+let checkNumber x =
+    match x with
+    | 1 -> printfn "One"
+    | 2 -> printfn "Two"
+    | 3 -> printfn "Three"
+    | _ -> printfn "Not one, two, or three"
+
+
+    0

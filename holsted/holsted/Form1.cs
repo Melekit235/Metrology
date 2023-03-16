@@ -7,6 +7,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using holsted.Metr1;
 
 namespace holsted
 {
@@ -29,22 +30,33 @@ namespace holsted
             string filename = openFileDialog1.FileName;
             string fileText = System.IO.File.ReadAllText(filename);
             inputText.Text = fileText;
-            MessageBox.Show("Файл успешно открыт");
-            
+
         }
 
         private void ButCount_Click(object sender, EventArgs e)
         {
             Lexer lex = new Lexer(inputText.Text);
-            List<Token> tokens = lex.fillTokensArr();
+            List<Token> tokens = lex.FillTokensArr();
             List<Token> operators = new List<Token>();
             List<Token> operands = new List<Token>();
             foreach (Token element in tokens)
             {
-                if (element.type == TokenType.KEYWORD || element.type == TokenType.OPERATOR || element.type == TokenType.METHOD)
+                if (element.type == TokenType.KEYWORD || element.type == TokenType.OPERATOR ||
+                    element.type == TokenType.METHOD)
                     operators.Add(element);
-                else
+
+
+
+                if (element.type == TokenType.NUMBER || element.type == TokenType.STRING ||
+                    element.type == TokenType.IDENTIFIER)
+                {
                     operands.Add(element);
+                    if (element.type == TokenType.STRING)
+                    {
+                        Token str = new Token(TokenType.OPERATOR, "\"\"");
+                        operators.Add(str);
+                    }
+                }
             }
             
             var resOprnds = operands.GroupBy(x => x.lexeme).Where(g => g.Count() > 0).Select(x => new { Element = x.Key, Count = x.Count() }).ToList();
@@ -64,7 +76,6 @@ namespace holsted
             {
                 dataGrid.Rows.Add();
                 dataGrid[0,i].Value = oprtr.Element;
-                if (oprtr.Element == "()")
                 dataGrid[1,i].Value = oprtr.Count;
                 i++;
             }

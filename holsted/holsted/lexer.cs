@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Diagnostics;
+using System.Drawing;
 
 namespace holsted
 {
@@ -15,7 +16,6 @@ namespace holsted
             OPERATOR,
             NUMBER,
             STRING,
-            SPACE,
             METHOD,
             NEW_METHOD,
             SKIP_WORDS,
@@ -36,98 +36,61 @@ namespace holsted
 
         public class Lexer
         {
-            public string sourseCode;
+            public string SoursCode;
 
             private Regex ident,
                 keyword,
                 skip,
                 number,
                 punctuator,
-                space,
                 metod,
                 str,
                 oper,
                 newMetod,
                 komment1,
-                komment2;
+                komment2,
+                entryPoin;
 
             public Lexer(string code)
             {
-                sourseCode = code;
+                SoursCode = code;
+                
                 ident = new Regex("([a-zA-Z_][a-zA-Z0-9_]*)");
-                keyword = new Regex(
-                    "(?<![a-zA-Z0-9_])(break|switch|case|try|continue|while|for|foreach|if|goto( )+([a-zA-Z_][a-zA-Z0-9_]*);)\\s+");
+                keyword = new Regex("(?<![a-zA-Z0-9_])(match|try|while|for|foreach|if|goto( )+([a-zA-Z_][a-zA-Z0-9_]*);)\\s+");
                 skip = new Regex(
-                    "((?<![a-zA-Z0-9_])(abstract|bool|byte|char|checked|const|decimal|do|to|then|catch|finally|else|default|delegate|double|enum|event|explicit|extern|fixed|float|implicit|interface|internal|int|in|lock|long|let|var|object|override|private|protected|public|readonly|sbyte|short|static|class|struct|string|uint|ulong|ushort|using( )*[^;]*;|virtual|void|volatile|namespace([^{]*))(\\s+|\\[))|:|;");
+                    "((?<![a-zA-Z0-9_])(abstract|bool|byte|char|checked|const|decimal|do|to|then|catch|finally|else|elif|default|delegate|double|enum|event|explicit|extern|fixed|float|implicit|interface|internal|int|in|lock|long|let|var|object|override|private|protected|public|readonly|sbyte|short|static|class|struct|string|uint|ulong|ushort|using( )*[^;]*;|virtual|void|volatile|namespace([^{]*))(\\s+|\\[))|:|;");
 
                 number = new Regex("\\d+");
                 str = new Regex("(\"[^\"]*\")");
-                space = new Regex("  \\s*");
                 oper = new Regex(
-                    "(\\(|\\)|\\{|\\}|\\[|\\]|==|\\+\\+|--|&&|\\|\\||!=|[<>]=|->|\\+\\=|-\\=|\\*\\=|/\\=|%\\=|<<=|>>=|&=|\\|\\=|\\^\\=|\\*|\\/|\\%|\\+|\\-|\\!|\\~|\\^|\\&|\\||\\?|\\.|\\=|\\.\\.|,|<<|<<|<|>| in | is | as )");
-                newMetod = new Regex("[a-zA-Z_][a-zA-Z0-9_]*\\([^\\)]*\\)\\s*\\=*\\}");
+                    "(\\(|\\)|\\{|\\}|\\[|\\]|==|\\+\\+|--|&&|\\|\\||!=|[<>]=|->|\\+\\=|-\\=|\\*\\=|/\\=|%\\=|<<=|>>=|&=|\\|\\=|\\^\\=|\\*|\\/|\\%|\\+|\\-|\\!|\\~|\\^|\\&|\\||\\?|\\.|\\=|\\.\\.|,|<<|<<|<|>)");
+                newMetod = new Regex("[a-zA-Z][a-zA-Z0-9]*\\s*(\\((.*?)\\))+\\s*=");
                 metod = new Regex("([a-zA-Z_][a-zA-Z0-9_]*\\([^\\)]*\\)|[a-zA-Z_][a-zA-Z0-9_]\\s*[a-zA-Z_][a-zA-Z0-9_]*|[a-zA-Z_][a-zA-Z0-9_]*\\s*(\"[^\"]*\"))");
                 komment1 = new Regex("(/\\*+[^(*/)]*\\*/)");
                 komment2 = new Regex("\\/\\/[^\r\n]*");
+                entryPoin = new Regex("\\[<EntryPoint>\\]");
+
             }
 
-            public List<Token> fillTokensArr()
+            public List<Token> FillTokensArr()
             {
                 List<Token> toks = new List<Token>();
-                Match match = komment1.Match(sourseCode);
-                sourseCode = sourseCode.Remove(sourseCode.IndexOf(match.Value), match.Length);
-                match = komment2.Match(sourseCode);
-                sourseCode = sourseCode.Remove(sourseCode.IndexOf(match.Value), match.Length);
+                Match match = komment1.Match(SoursCode);
+                SoursCode = SoursCode.Remove(SoursCode.IndexOf(match.Value), match.Length);
+                match = komment2.Match(SoursCode);
+                SoursCode = SoursCode.Remove(SoursCode.IndexOf(match.Value), match.Length);
+                match = entryPoin.Match(SoursCode);
+                SoursCode = SoursCode.Remove(SoursCode.IndexOf(match.Value), match.Length);
 
                 Token token = new Token(TokenType.STRING, "");
 
                 while (token.type != TokenType.END)
                 {
-                    token = getToken();
-                    if (token.type != TokenType.SKIP_WORDS && token.type != TokenType.SPACE &&
+                    token = GetToken();
+                    if (token.type != TokenType.SKIP_WORDS &&
                         token.type != TokenType.END && token.lexeme != "}" &&
                         token.lexeme != "]" && token.lexeme != ")")
                     {
-
-                        switch (token.lexeme)
-                            {
-                                case "if":
-                                {
-                                    token.lexeme = "if..then..else";
-                                    break;
-                                }
-                                case "try":
-                                {
-                                    token.lexeme = "try..catch..finally";
-                                    break;
-                                }
-                                case "for":
-                                {
-                                    token.lexeme = "for..to..do";
-                                    break;
-                                }
-                                case "{":
-                                {
-                                    token.lexeme = "{}";
-                                    break;
-                                }
-                                case "(":
-                                {
-                                    token.lexeme = "()";
-                                    break;
-                                }
-                                case "[":
-                                {
-                                    token.lexeme = "[]";
-                                    break;
-                                }
-                                case "?":
-                                {
-                                    token.lexeme = "?:";
-                                    break;
-                                }
-                            }
-
                         toks.Add(token);
                     }
                 }
@@ -135,9 +98,9 @@ namespace holsted
                 return toks;
             }
 
-            private Token getToken()
+            private Token GetToken()
             {
-                string code = sourseCode;
+                string code = SoursCode;
                 Match match = null;
                 Token tok = new Token(TokenType.STRING, "");
                 match = str.Match(code);
@@ -162,6 +125,24 @@ namespace holsted
                         {
                             tok.type = TokenType.KEYWORD;
                             tok.lexeme = match.Value.Trim();
+                            switch (tok.lexeme)
+                            {
+                                case "if":
+                                {
+                                    tok.lexeme = "if..then..else";
+                                    break;
+                                }
+                                case "try":
+                                {
+                                    tok.lexeme = "try..catch..finally";
+                                    break;
+                                }
+                                case "for":
+                                {
+                                    tok.lexeme = "for..to..do";
+                                    break;
+                                }
+                            }
                         }
                         
                         else
@@ -193,6 +174,24 @@ namespace holsted
                                     {
                                         tok.type = TokenType.OPERATOR;
                                         tok.lexeme = match.Value;
+                                        switch (tok.lexeme)
+                                        {
+                                             case "{":
+                                            {
+                                                tok.lexeme = "{}";
+                                                break;
+                                            }
+                                            case "(":
+                                            {
+                                                tok.lexeme = "()";
+                                                break;
+                                            }
+                                            case "[":
+                                            {
+                                                tok.lexeme = "[]";
+                                                break;
+                                            }
+                                        }
                                     }
                                     else
                                     {
@@ -212,17 +211,8 @@ namespace holsted
                                             }
                                             else
                                             {
-                                                match = space.Match(code);
-                                                if (match.Value != "")
-                                                {
-                                                    tok.type = TokenType.SPACE;
-                                                    tok.lexeme = match.Value;
-                                                }
-                                                else
-                                                {
-                                                    tok.type = TokenType.END;
-                                                    tok.lexeme = "";
-                                                }
+                                                tok.type = TokenType.END;
+                                                tok.lexeme = "";
                                             }
                                         }
                                     }
@@ -231,9 +221,7 @@ namespace holsted
                         }
                     }
                 }
-
-                //sourseCode = sourseCode.Remove(code.IndexOf(match.Value), match.Length);
-                sourseCode = sourseCode.Substring(0, code.IndexOf(match.Value)) + " " + sourseCode.Substring(code.IndexOf(match.Value) + match.Length);
+                SoursCode = SoursCode.Substring(0, code.IndexOf(match.Value)) + " " + SoursCode.Substring(code.IndexOf(match.Value) + match.Length);
                 return tok;
             }
         }

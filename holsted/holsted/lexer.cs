@@ -1,221 +1,240 @@
-﻿using System.Collections.Generic;
-using System.Text.RegularExpressions;
+﻿using System.Drawing;
 
 namespace holsted
 {
+    using System;
+    using System.Collections.Generic;
+    using System.Text.RegularExpressions;
 
-    public enum Type
+    namespace Metr1
     {
-        KEYWORD,
-        IDENT,
-        NUMBER,
-        STRING,
-        OPERATOR,
-        OTHER,
-        NEW_METHOD,
-        METHOD,
-        SPACE,
-        END
-    }
-
-    public class Token
-    {
-        public Type Type;
-        public string Lex;
-        
-        public Token(Type t, string l)
+        public enum TokenType
         {
-            this.Type = t;
-            this.Lex = l;
+            KEYWORD,
+            IDENTIFIER,
+            OPERATOR,
+            NUMBER,
+            STRING,
+            SPACE,
+            METHOD,
+            NEW_METHOD,
+            SKIP_WORDS,
+            END
+        };
+
+        public class Token
+        {
+            public TokenType type;
+            public string lexeme;
+
+            public Token(TokenType t, string l)
+            {
+                this.type = t;
+                this.lexeme = l;
+            }
         }
 
-    }
-    
-    
-    public class Lexer
-    {
-        public string ProgramCode;
-        private Regex Ident, Keyword, Other,Number,Space,Metod,Str,Operator,NewMetod,Komment,KommentInLine;
-        
-        public Lexer(string code)
+        public class Lexer
         {
-            this.ProgramCode = code;
-            Ident = new Regex("([a-zA-Z_][a-zA-Z0-9_]*)"); 
-              Keyword = new Regex("(break|switch|try|continue|while|for|foreach|if|goto( )+([a-zA-Z_][a-zA-Z0-9_]*);|return){1}");
-              Other = new Regex("((\\$|abstract|bool|byte|char|checked|const|decimal|do|catch|finally|else|case|default|delegate|double|enum|event|explicit|extern|fixed|float|implicit|interface|internal|int|lock|long|let|object|override|private|protected|public|readonly|sbyte|short|static|class|struct|string|uint|ulong|ushort|using( )*[^;]*;|virtual|void|volatile|([a-zA-Z_][a-zA-Z0-9_]*):|:|;|namespace([^{]*)){1})");
-            Number = new Regex("\\d+"); 
-            Str = new Regex("(\"[^\"]*\")");
-              Space = new Regex("  \\s*");
-            Operator = new Regex("(\\(|\\)|\\{|\\}|\\[|\\]|==|\\+\\+|--|&&|\\|\\||!=|[<>]=|->|\\+\\=|-\\=|\\*\\=|/\\=|%\\=|<<=|>>=|&=|\\|\\=|\\^\\=|\\*|\\/|\\%|\\+|\\-|\\!|\\~|\\^|\\&|\\||\\?|\\.|\\=|\\.\\.|\\;|,|<<|<<|<|>| in | is | as )");
-            NewMetod = new Regex("[a-zA-Z_][a-zA-Z0-9_]*\\([^\\)]*\\)\\s*\\{[^\\}]*\\}");
-            Metod = new Regex("([a-zA-Z_][a-zA-Z0-9_]*\\([^\\)]*\\))");
-            Komment = new Regex("\\(\\*[^(*/)]*\\*\\)");
-            KommentInLine = new Regex("\\/\\/[^\r\n]*");
-        }
-        
-        
-        
-        public List<Token> FillTokenList()
-        {
-            List<Token> tokenList = new List<Token>();
-            Match match = Komment.Match(ProgramCode);
-            ProgramCode = ProgramCode.Remove(ProgramCode.IndexOf(match.Value), match.Length);
-            match = KommentInLine.Match(ProgramCode);
-            ProgramCode = ProgramCode.Remove(ProgramCode.IndexOf(match.Value), match.Length);
-            
-            Token token = new Token(Type.STRING,"");
+            public string sourseCode;
 
-            while (token.Type != Type.END)
+            private Regex ident,
+                keyword,
+                skip,
+                number,
+                punctuator,
+                space,
+                metod,
+                str,
+                oper,
+                newMetod,
+                komment1,
+                komment2;
+
+            public Lexer(string code)
             {
-                token = getOneToken();
-                if (token.Type != Type.OTHER && token.Type != Type.SPACE && token.Type != Type.END && token.Lex != "}" && token.Lex != "]" && token.Lex != ")")
-                  tokenList.Add(token);
+                sourseCode = code;
+                ident = new Regex("([a-zA-Z_][a-zA-Z0-9_]*)");
+                keyword = new Regex(
+                    "(?<![a-zA-Z0-9_])(break|switch|case|try|continue|while|for|foreach|if|goto( )+([a-zA-Z_][a-zA-Z0-9_]*);)\\s+");
+                skip = new Regex(
+                    "((?<![a-zA-Z0-9_])(abstract|bool|byte|char|checked|const|decimal|do|to|then|catch|finally|else|default|delegate|double|enum|event|explicit|extern|fixed|float|implicit|interface|internal|int|in|lock|long|let|var|object|override|private|protected|public|readonly|sbyte|short|static|class|struct|string|uint|ulong|ushort|using( )*[^;]*;|virtual|void|volatile|namespace([^{]*))(\\s+|\\[))|:|;");
+
+                number = new Regex("\\d+");
+                str = new Regex("(\"[^\"]*\")");
+                space = new Regex("  \\s*");
+                oper = new Regex(
+                    "(\\(|\\)|\\{|\\}|\\[|\\]|==|\\+\\+|--|&&|\\|\\||!=|[<>]=|->|\\+\\=|-\\=|\\*\\=|/\\=|%\\=|<<=|>>=|&=|\\|\\=|\\^\\=|\\*|\\/|\\%|\\+|\\-|\\!|\\~|\\^|\\&|\\||\\?|\\.|\\=|\\.\\.|,|<<|<<|<|>| in | is | as )");
+                newMetod = new Regex("[a-zA-Z_][a-zA-Z0-9_]*\\([^\\)]*\\)\\s*\\=*\\}");
+                metod = new Regex("([a-zA-Z_][a-zA-Z0-9_]*\\([^\\)]*\\)|[a-zA-Z_][a-zA-Z0-9_]\\s*[a-zA-Z_][a-zA-Z0-9_]*|[a-zA-Z_][a-zA-Z0-9_]*\\s*(\"[^\"]*\"))");
+                komment1 = new Regex("(/\\*+[^(*/)]*\\*/)");
+                komment2 = new Regex("\\/\\/[^\r\n]*");
             }
-            return tokenList;
-        }
-        
-        
-        
-        private Token getOneToken()
-        {
-            string code = ProgramCode;
-            Match match = null;
-            Token getToken = new Token(Type.STRING, "");
-            
-            match = Str.Match(code);
-            if (match.Value != "")
+
+            public List<Token> fillTokensArr()
             {
-                getToken.Type = Type.STRING;
-                getToken.Lex = match.Value;
-                ProgramCode = ProgramCode.Substring(0, code.IndexOf(match.Value)) + " " + ProgramCode.Substring(code.IndexOf(match.Value) + match.Length);
-                return getToken;
-            }
-                
-            match = Other.Match(code);
-            if (match.Value != "") {
-                getToken.Type = Type.OTHER;
-                getToken.Lex = match.Value;
-                ProgramCode = ProgramCode.Substring(0, code.IndexOf(match.Value)) + " " + ProgramCode.Substring(code.IndexOf(match.Value) + match.Length);
-                return getToken;
-            }
-               
-                    
-            match = Keyword.Match(code);
-            if (match.Value != "")
-            {
-                getToken.Type = Type.KEYWORD;
-                getToken.Lex = match.Value;
-                switch (getToken.Lex)
+                List<Token> toks = new List<Token>();
+                Match match = komment1.Match(sourseCode);
+                sourseCode = sourseCode.Remove(sourseCode.IndexOf(match.Value), match.Length);
+                match = komment2.Match(sourseCode);
+                sourseCode = sourseCode.Remove(sourseCode.IndexOf(match.Value), match.Length);
+
+                Token token = new Token(TokenType.STRING, "");
+
+                while (token.type != TokenType.END)
                 {
-                    case "if":
+                    token = getToken();
+                    if (token.type != TokenType.SKIP_WORDS && token.type != TokenType.SPACE &&
+                        token.type != TokenType.END && token.lexeme != "}" &&
+                        token.lexeme != "]" && token.lexeme != ")")
                     {
-                        getToken.Lex = "if-else";
-                        break;
-                    }
-                    case "try":
-                    {
-                        getToken.Lex = "try-catch-finally";
-                        break;
-                    }
-                    case "switch":
-                    {
-                        getToken.Lex = "switch-case";
-                        break;
+
+                        switch (token.lexeme)
+                            {
+                                case "if":
+                                {
+                                    token.lexeme = "if..then..else";
+                                    break;
+                                }
+                                case "try":
+                                {
+                                    token.lexeme = "try..catch..finally";
+                                    break;
+                                }
+                                case "for":
+                                {
+                                    token.lexeme = "for..to..do";
+                                    break;
+                                }
+                                case "{":
+                                {
+                                    token.lexeme = "{}";
+                                    break;
+                                }
+                                case "(":
+                                {
+                                    token.lexeme = "()";
+                                    break;
+                                }
+                                case "[":
+                                {
+                                    token.lexeme = "[]";
+                                    break;
+                                }
+                                case "?":
+                                {
+                                    token.lexeme = "?:";
+                                    break;
+                                }
+                            }
+
+                        toks.Add(token);
                     }
                 }
 
-                ProgramCode = ProgramCode.Substring(0, code.IndexOf(match.Value)) + " " + ProgramCode.Substring(code.IndexOf(match.Value) + match.Length);
-                return getToken;
+                return toks;
             }
-                   
+
+            private Token getToken()
+            {
+                string code = sourseCode;
+                Match match = null;
+                Token tok = new Token(TokenType.STRING, "");
+                match = str.Match(code);
+                if (match.Value != "")
+                {
+                    tok.type = TokenType.STRING;
+                    tok.lexeme = match.Value;
+                }
+                else
+                {
+                    match = skip.Match(code);
+                    if (match.Value != "")
+                    {
+                        tok.type = TokenType.SKIP_WORDS;
+                        tok.lexeme = match.Value.Trim();
+                    }
+
+                    else
+                    {
+                        match = keyword.Match(code);
+                        if (match.Value != "")
+                        {
+                            tok.type = TokenType.KEYWORD;
+                            tok.lexeme = match.Value.Trim();
+                        }
                         
-            match = NewMetod.Match(code);
-            if (match.Value != "")
-            {
-                getToken.Type = Type.NEW_METHOD;
-                getToken.Lex = match.Value;
-                match = Ident.Match(getToken.Lex);
-                getToken.Lex = match.Value;
-                ProgramCode = ProgramCode.Substring(0, code.IndexOf(match.Value)) + " " + ProgramCode.Substring(code.IndexOf(match.Value) + match.Length);
-                return getToken;
-            }
-                       
-                            
-            match = Metod.Match(code);
-            if (match.Value != "")
-            {
-                getToken.Type = Type.METHOD;
-                getToken.Lex = match.Value+"()";
-                match = Ident.Match(getToken.Lex);
-                getToken.Lex = match.Value;
-                ProgramCode = ProgramCode.Substring(0, code.IndexOf(match.Value)) + " " + ProgramCode.Substring(code.IndexOf(match.Value) + match.Length);
-                return getToken;
-            }
-                                
-            match = Operator.Match(code);
-            if (match.Value != "")
-            {
-                getToken.Type = Type.OPERATOR;
-                getToken.Lex = match.Value;
-                switch (getToken.Lex)
-                {
-                    case "{":
-                    {
-                        getToken.Lex = "{}";
-                        break;
-                    }
-                    case "(":
-                    {
-                        getToken.Lex = "()";
-                        break;
-                    }
-                    case "[":
-                    {
-                        getToken.Lex = "[]";
-                        break;
-                    }
-                    case "?":
-                    {
-                        getToken.Lex = "?:";
-                        break;
+                        else
+                        {
+                            match = newMetod.Match(code);
+                            if (match.Value != "")
+                            {
+                                tok.type = TokenType.NEW_METHOD;
+                                tok.lexeme = match.Value;
+                                match = ident.Match(tok.lexeme);
+                                tok.lexeme = match.Value;
+                            }
+
+                            else
+                            {
+                                match = metod.Match(code);
+                                if (match.Value != "")
+                                {
+                                    tok.type = TokenType.METHOD;
+                                    tok.lexeme = match.Value;
+                                    match = ident.Match(tok.lexeme);
+                                    tok.lexeme = match.Value;
+                                }
+
+                                else
+                                {
+                                    match = oper.Match(code);
+                                    if (match.Value != "")
+                                    {
+                                        tok.type = TokenType.OPERATOR;
+                                        tok.lexeme = match.Value;
+                                    }
+                                    else
+                                    {
+                                        match = ident.Match(code);
+                                        if (match.Value != "")
+                                        {
+                                            tok.type = TokenType.IDENTIFIER;
+                                            tok.lexeme = match.Value;
+                                        }
+                                        else
+                                        {
+                                            match = number.Match(code);
+                                            if (match.Value != "")
+                                            {
+                                                tok.type = TokenType.NUMBER;
+                                                tok.lexeme = match.Value;
+                                            }
+                                            else
+                                            {
+                                                match = space.Match(code);
+                                                if (match.Value != "")
+                                                {
+                                                    tok.type = TokenType.SPACE;
+                                                    tok.lexeme = match.Value;
+                                                }
+                                                else
+                                                {
+                                                    tok.type = TokenType.END;
+                                                    tok.lexeme = "";
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
-                ProgramCode = ProgramCode.Substring(0, code.IndexOf(match.Value)) + " " + ProgramCode.Substring(code.IndexOf(match.Value) + match.Length);
-                return getToken;
-            }
-                                    
-            match = Ident.Match(code);
-            if (match.Value != "")
-            {
-                getToken.Type = Type.IDENT;
-                getToken.Lex = match.Value;
-                ProgramCode = ProgramCode.Substring(0, code.IndexOf(match.Value)) + " " + ProgramCode.Substring(code.IndexOf(match.Value) + match.Length);
-                return getToken;
-            }
-                                        
-            match = Number.Match(code);
-            if (match.Value != "")
-            {
-                getToken.Type = Type.NUMBER;
-                getToken.Lex = match.Value;
-                ProgramCode = ProgramCode.Substring(0, code.IndexOf(match.Value)) + " " + ProgramCode.Substring(code.IndexOf(match.Value) + match.Length);
-                return getToken;
-            }
-                                            
-            match = Space.Match(code);
-            if (match.Value != "")
-            {
-                getToken.Type = Type.SPACE;
-                getToken.Lex = match.Value;
-                ProgramCode = ProgramCode.Substring(0, code.IndexOf(match.Value)) + " " + ProgramCode.Substring(code.IndexOf(match.Value) + match.Length);
-                return getToken;
-            }
-            else
-            {
-                getToken.Type = Type.END;
-                getToken.Lex = "";
-                ProgramCode = ProgramCode.Substring(0, code.IndexOf(match.Value)) + " " + ProgramCode.Substring(code.IndexOf(match.Value) + match.Length);
-                return getToken;
+
+                //sourseCode = sourseCode.Remove(code.IndexOf(match.Value), match.Length);
+                sourseCode = sourseCode.Substring(0, code.IndexOf(match.Value)) + " " + sourseCode.Substring(code.IndexOf(match.Value) + match.Length);
+                return tok;
             }
         }
     }

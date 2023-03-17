@@ -10,10 +10,10 @@ let matrixMultiply (a: int[,]) (b: int[,]) =
 
     for i = 0 to m - 1 do
         for j = 0 to p - 1 do
-            let mutable sum = 0
+            let mutable s = 0
             for k = 0 to n - 1 do
-                sum <- sum + a.[i, k] * b.[k, j]
-            c.[j, i] <- sum
+                s <- s + a.[i, k] * b.[k, j]
+            c.[j, i] <- s
 
     c
 

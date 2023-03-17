@@ -88,7 +88,5 @@ namespace holsted
             richTextBox1.Text += "Длина: " + Length + "\n";
             richTextBox1.Text += "Объем: " + Convert.ToInt32(Length * Math.Log (Dict, 2)) + "\n";
         }
-
-        
     }
 }

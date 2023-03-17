@@ -58,13 +58,13 @@ namespace holsted
                 ident = new Regex("([a-zA-Z_][a-zA-Z0-9_]*)");
                 keyword = new Regex("(?<![a-zA-Z0-9_])(match|try|while|for|foreach|if|goto( )+([a-zA-Z_][a-zA-Z0-9_]*);)\\s+");
                 skip = new Regex(
-                    "((?<![a-zA-Z0-9_])(abstract|bool|byte|char|checked|const|decimal|do|to|then|catch|finally|else|elif|default|delegate|double|enum|event|explicit|extern|fixed|float|implicit|interface|internal|int|in|lock|long|let|var|object|override|private|protected|public|readonly|sbyte|short|static|class|struct|string|uint|ulong|ushort|using( )*[^;]*;|virtual|void|volatile|namespace([^{]*))(\\s+|\\[))|:|;");
+                    "((?<![a-zA-Z0-9_])(abstract|bool|byte|char|checked|const|decimal|do|to|then|catch|finally|else|elif|default|delegate|double|enum|event|explicit|extern|fixed|float|implicit|interface|internal|int|in|lock|long|let|var|object|override|private|protected|public|readonly|sbyte|short|static|class|struct|string|uint|ulong|ushort|using( )*[^;]*;|virtual|void|volatile|namespace([^{]*))(\\s+|\\[))");
 
                 number = new Regex("\\d+");
                 str = new Regex("(\"[^\"]*\")");
                 oper = new Regex(
-                    "(\\(|\\)|\\{|\\}|\\[|\\]|==|\\+\\+|--|&&|\\|\\||!=|[<>]=|->|\\+\\=|-\\=|\\*\\=|/\\=|%\\=|<<=|>>=|&=|\\|\\=|\\^\\=|\\*|\\/|\\%|\\+|\\-|\\!|\\~|\\^|\\&|\\||\\?|\\.|\\=|\\.\\.|,|<<|<<|<|>)");
-                newMetod = new Regex("[a-zA-Z][a-zA-Z0-9]*\\s*(\\((.*?)\\))+\\s*=");
+                    "(\\(|\\)|\\{|\\}|\\[|\\]|==|\\+\\+|--|&&|\\|\\||!=|[<>]=|->|\\+\\=|-\\=|\\*\\=|/\\=|%\\=|<<=|>>=|&=|\\|\\=|\\^\\=|\\*|\\/|\\%|\\+|\\-|\\!|\\~|\\^|\\&|\\||\\?|\\.|\\=|\\.\\.|,|<<|<<|<|>|\\:|\\;)");
+                newMetod = new Regex(@"let\s+([a-zA-Z_][a-zA-Z0-9_]*)\s*(\([^)]*\)\s*)+\s*=\s*");
                 metod = new Regex("([a-zA-Z_][a-zA-Z0-9_]*\\([^\\)]*\\)|[a-zA-Z_][a-zA-Z0-9_]\\s*[a-zA-Z_][a-zA-Z0-9_]*|[a-zA-Z_][a-zA-Z0-9_]*\\s*(\"[^\"]*\"))");
                 komment1 = new Regex("(/\\*+[^(*/)]*\\*/)");
                 komment2 = new Regex("\\/\\/[^\r\n]*");
@@ -111,11 +111,16 @@ namespace holsted
                 }
                 else
                 {
-                    match = skip.Match(code);
+
+                    
+                    match = newMetod.Match(code);
                     if (match.Value != "")
                     {
-                        tok.type = TokenType.SKIP_WORDS;
-                        tok.lexeme = match.Value.Trim();
+                        tok.type = TokenType.NEW_METHOD;
+                        tok.lexeme = match.Value;
+                        tok.lexeme = tok.lexeme.Remove(0, 3);
+                        match = ident.Match(tok.lexeme);
+                        tok.lexeme = match.Value;
                     }
 
                     else
@@ -147,13 +152,11 @@ namespace holsted
                         
                         else
                         {
-                            match = newMetod.Match(code);
+                            match = skip.Match(code);
                             if (match.Value != "")
                             {
-                                tok.type = TokenType.NEW_METHOD;
-                                tok.lexeme = match.Value;
-                                match = ident.Match(tok.lexeme);
-                                tok.lexeme = match.Value;
+                                tok.type = TokenType.SKIP_WORDS;
+                                tok.lexeme = match.Value.Trim();
                             }
 
                             else

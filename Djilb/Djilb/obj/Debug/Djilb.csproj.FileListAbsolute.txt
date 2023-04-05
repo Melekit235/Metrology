@@ -1,0 +1,11 @@
+D:\ВУЗ\metrology\Metrology\Djilb\Djilb\bin\Debug\Djilb.exe.config
+D:\ВУЗ\metrology\Metrology\Djilb\Djilb\bin\Debug\Djilb.exe
+D:\ВУЗ\metrology\Metrology\Djilb\Djilb\bin\Debug\Djilb.pdb
+D:\ВУЗ\metrology\Metrology\Djilb\Djilb\obj\Debug\Djilb.csproj.AssemblyReference.cache
+D:\ВУЗ\metrology\Metrology\Djilb\Djilb\obj\Debug\Djilb.csproj.SuggestedBindingRedirects.cache
+D:\ВУЗ\metrology\Metrology\Djilb\Djilb\obj\Debug\Djilb.Properties.Resources.resources
+D:\ВУЗ\metrology\Metrology\Djilb\Djilb\obj\Debug\Djilb.csproj.GenerateResource.cache
+D:\ВУЗ\metrology\Metrology\Djilb\Djilb\obj\Debug\Djilb.csproj.CoreCompileInputs.cache
+D:\ВУЗ\metrology\Metrology\Djilb\Djilb\obj\Debug\Djilb.exe
+D:\ВУЗ\metrology\Metrology\Djilb\Djilb\obj\Debug\Djilb.pdb
+D:\ВУЗ\metrology\Metrology\Djilb\Djilb\obj\Debug\Djilb.Form1.resources

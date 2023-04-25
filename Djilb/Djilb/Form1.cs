@@ -18,15 +18,17 @@ namespace Djilb
             InitializeComponent();
         }
 
-
+        public string path;
         private void richTextBox1_MouseDoubleClick(object sender, MouseEventArgs e)
         {
+            
             OpenFileDialog openFileDialog = new OpenFileDialog();
             openFileDialog.InitialDirectory = "d://ВУЗ//metrology//Metrology//Djilb//Djilb//bin//Debug//";
                 
             if (openFileDialog.ShowDialog() == DialogResult.OK)
             {
                 richTextBox1.Text = File.ReadAllText(openFileDialog.FileName);
+                path = openFileDialog.FileName;
             }
             else
             {
@@ -40,7 +42,7 @@ namespace Djilb
             int i = Metric.LogicalComplexity(richTextBox1.Text);
             label4.Text = i.ToString();
             label5.Text = Metric.RelativeComplexity(richTextBox1.Text, i).ToString();
-            label6.Text = Metric.CalculateMaxTabDepth(richTextBox1.Text).ToString();
+            label6.Text = Pr.CalculateMaxConditionalDepth(path).ToString();
         }
     }
 }

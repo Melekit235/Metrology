@@ -9,7 +9,7 @@ let rec nestedFunc1 a b =
         | 2 -> 
             printfn "a is two"
             printfn "b is %d" b
-        |  ->
+        | _ ->
             let mutable c = a
             while c < b do
                 printfn "c is %d" c
@@ -23,12 +23,12 @@ let rec nestedFunc1 a b =
                     nestedFunc1 (c-1) (b+1)
                 c <- c + 1
 
-and nestedFunc2 x =
+let nestedFunc2 x =
     match x with
     | 0 -> printfn "x is zero"
     | 1 -> printfn "x is one"
     | 2 -> printfn "x is two"
-    |  -> printfn "x is greater than two"
+    | _ -> printfn "x is greater than two"
 
 let a = 5
 let b = 10
